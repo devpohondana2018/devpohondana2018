@@ -1,0 +1,200 @@
+<?php
+
+namespace App\Admin\Controllers;
+
+use App\ActivityLog;
+
+use Encore\Admin\Form;
+use Encore\Admin\Grid;
+use Encore\Admin\Facades\Admin;
+use Encore\Admin\Layout\Content;
+use App\Http\Controllers\Controller;
+use Encore\Admin\Controllers\ModelForm;
+use DB;
+use App\User;
+use App\AdminUser;
+
+class ActivityLogController extends Controller
+{
+    use ModelForm;
+
+    /**
+     * Index interface.
+     *
+     * @return Content
+     */
+    public function index()
+    {
+        return Admin::content(function (Content $content) {
+
+            $content->header('Users Logs');
+            // $content->description('description');
+            $content->breadcrumb(
+             ['text' => 'Activity Logs', 'url' => '/activitylogs']
+            );
+            $content->body($this->grid());
+        });
+    }
+
+    /**
+     * Edit interface.
+     *
+     * @param $id
+     * @return Content
+     */
+    public function edit($id)
+    {
+        return Admin::content(function (Content $content) use ($id) {
+
+            $content->header('Users Logs');
+            // $content->description('description');
+            $content->breadcrumb(
+             ['text' => 'Activity Logs', 'url' => '/activitylogs'],
+             ['text' => 'Edit', 'url' => '/activitylogs/edit']
+            );
+            $content->body($this->form()->edit($id));
+        });
+    }
+
+    /**
+     * Create interface.
+     *
+     * @return Content
+     */
+    public function create()
+    {
+        return Admin::content(function (Content $content) {
+
+            $content->header('Users Logs');
+            // $content->description('description');
+            $content->breadcrumb(
+             ['text' => 'Activity Logs', 'url' => '/activitylogs'],
+             ['text' => 'Create', 'url' => '/activitylogs/create']
+            );
+            $content->body($this->form());
+        });
+    }
+
+    /**
+     * Make a grid builder.
+     *
+     * @return Grid
+     */
+    protected function grid()
+    {
+        return Admin::grid(ActivityLog::class, function (Grid $grid) {
+
+            $grid->model()->orderBy('id', 'desc');
+            $grid->id('ID')->sortable();
+
+            // $grid->subject_id();
+            // $grid->causer_id();
+            $grid->column('User')->display(function () {
+                $activity_logs = ActivityLog::find($this->id);
+                // dd($activity_logs);
+                $getuser = $activity_logs->causer_type::find($activity_logs->causer_id);
+                // dd($getuser);
+                if ($activity_logs->causer_type == 'Encore\Admin\Auth\Database\Administrator') {
+                    $activity_log_title         = $activity_logs->causer_tpye;
+                    $activity_logs->causer_type = 'auth/users';
+                }elseif($activity_logs->causer_type == 'Illuminate\Foundation\Auth\User'){
+                    $activity_log_title         = $activity_logs->causer_tpye;
+                    $activity_logs->causer_type = 'users';
+                }else{
+                    $activity_logs->causer_type = substr($activity_logs->causer_type,4);
+                    $activity_log_title          = $activity_logs->causer_type;
+                    $activity_logs->causer_type = strtolower($activity_logs->causer_type);
+                    $activity_logs->causer_type = $activity_logs->causer_type.'s';
+                }
+                return !empty($activity_logs) && !empty($getuser) ? '<a href="'.url('admin/'.$activity_logs->causer_type.'/'.$getuser->id).'">'.$getuser->name.'</a>' : '-';
+            });
+            $grid->column('Related Document')->display(function () {
+                $activity_logs = ActivityLog::find($this->id);
+                if (!empty($activity_logs->subject_type)) {
+                    $getrelateddocument = $activity_logs->subject_type::find($activity_logs->subject_id);
+                    // dd($getrelateddocument);
+                    if (!empty($getrelateddocument)) {
+                        $activity_logs->subject_type = substr($activity_logs->subject_type,4);
+                        $activity_log_title          = $activity_logs->subject_type;
+                        $activity_logs->subject_type = strtolower($activity_logs->subject_type);
+                        $activity_logs->subject_type = $activity_logs->subject_type.'s';
+                        return !empty($activity_logs) && !empty($getrelateddocument) ? '<a href="'.url('admin/'.$activity_logs->subject_type.'/'.$getrelateddocument->id).'">'.$activity_log_title.' #'.$getrelateddocument->id.'</a>' : '-';
+                    }
+                        return '';
+                }else{
+                    return '';
+                }
+            });
+            $grid->column('Related User')->display(function () {
+                $activity_logs = ActivityLog::find($this->id);
+                    $properties = $activity_logs->properties;
+                    $properties = json_decode($properties);
+                if (!empty($properties)) {
+                    // dd($properties->user_id);
+                    if (!empty($properties->user_id)) {
+                        # code...
+                    $getuser = User::find($properties->user_id);
+                    // dd($getuser);
+                        $activity_logs->causer_type = substr($activity_logs->causer_type,4);
+                        $activity_log_title          = $activity_logs->causer_type;
+                        $activity_logs->causer_type = strtolower($activity_logs->causer_type);
+                        $activity_logs->causer_type = $activity_logs->causer_type.'s';
+                    }
+                    return !empty($getuser) ? '<a href="'.url('admin/users/'.$getuser->id).'">'.$getuser->name.'</a>' : '';
+                }else{
+                    return '';
+                }
+            });
+            $grid->description('Activity');
+            $grid->properties('Properties')->setAttributes(['class' => 'width-log'])->display(function($properties){
+                $properties = json_decode($properties, true);
+                $property = '';
+                foreach ($properties as $key => $value) {
+                    !empty($key) ? $property .= $key . '</br>' : '';
+                }
+                return $property;
+            });
+            $grid->column('Value')->setAttributes(['class' => 'width-log'])->display(function(){
+                $activity_logs = ActivityLog::find($this->id)->properties;
+                $properties = json_decode($activity_logs, true);
+                $property = '';
+                foreach($properties as $key => $val) {
+                    !empty($val) ? $property .= $val . '<br>' : '';
+                    //$property = $property.$val.'</br>';
+                }
+                return $property;
+            });
+            // $grid->properties('Related User');
+            $grid->created_at()->sortable();
+            $grid->updated_at()->sortable();
+            $grid->filter(function($filter){
+                $filter->where(function ($query) {
+                        $query->whereHas('admin_users', function ($query) {
+                            $query->where('causer_id', '=', "{$this->input}");
+                        });
+                }, 'AdminUser')->select(AdminUser::get()->pluck('name','id'));
+                $filter->where(function ($query) {
+                    $query->join('users', 'users.id', '=', 'causer_id')
+                            ->where('causer_id', '=', "{$this->input}");
+
+                }, 'User')->select(User::get()->pluck('name','id'));
+            });
+        });
+    }
+
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function form()
+    {
+        return Admin::form(ActivityLog::class, function (Form $form) {
+
+            $form->display('id', 'ID');
+
+            $form->display('created_at', 'Created At');
+            $form->display('updated_at', 'Updated At');
+        });
+    }
+}

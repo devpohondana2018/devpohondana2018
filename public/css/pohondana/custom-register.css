@@ -1,0 +1,81 @@
+.text-header {
+	margin-top: 25px;
+}
+
+.card-register {
+	background-color:white;
+	width:75%;
+	height:400px;
+	margin:50px;
+	border-radius: 8px;
+	box-shadow: 0px 10px 20px -6px rgba(242,112,63,.5);
+	overflow:hidden;
+	cursor:pointer;
+	align-content: center;
+	padding: 45px;
+}
+
+.card-register:before,
+.card-register:after {
+	content: '';
+	display: block;
+	height: 15px;
+	border-radius: 0px 0px 4px 4px;
+	position:absolute;
+	bottom:100px;
+	background-color: #F2C5B3;
+}
+.card-register:before {
+	width:85%;
+	margin-left:3.5%;
+	margin-bottom:-10px;
+	z-index: -1;
+	box-shadow: 0px 10px 20px -6px rgba(242,112,63,.5);
+}
+.card-register:after {
+	width:75%;
+	z-index: -2;
+	margin-left:9%;
+	margin-bottom:-20px;
+	height: 30px;
+	background-color: #F59A78;
+}
+
+/* Inside Card */
+
+.card-register img.card-image {
+	width:200px;
+	height: auto;
+}
+
+.card-register .card-content {
+	text-align:center;
+	font-size: 16pt;
+	color: #3f3f3f;
+	margin-top: 30px;
+}
+
+.btn-register {
+	font-size: 14pt;
+	width: 100%;
+}
+
+
+	/* Interactive States */
+
+	.card-register, .card-register:after, .card-register:before {
+		transition: all .5s ease;
+	}
+
+	.card-register:hover {
+		margin-top: 45px;
+		box-shadow: 0px 15px 30px -6px rgba(242,112,63,.4);
+	}
+
+	.card-register:hover:before {
+		margin-bottom:-15px;
+	}
+
+	.card-register:hover:after {
+		margin-bottom:-25px;
+	}

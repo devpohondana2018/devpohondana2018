@@ -1,0 +1,78 @@
+html, body {
+	font-family: 'Raleway', sans-serif;
+}
+/*body {
+	background: url('{{ asset('images/background-borrow.jpg') }}'); 
+	background-size: cover;
+	background-attachment:fixed; 
+	padding: 40px 0px !important;
+	}*/
+	.content {
+		text-align: center;
+	}
+	.bg-pd-dark {
+		background-color: #0a6455;
+	}
+	.bg-pd-light {
+		background-color: #74BA56;
+	}
+	.bg-pd-grey-dark {
+		background-color: #7C7D7A;
+	}
+	.navbar {
+		border-bottom: 1px solid;
+		border-color: #e0e0e0;
+	}
+	.navbar-light .navbar-nav .nav-link, .navbar-light .navbar-nav .navbar-text {
+		color: rgba(0,0,0,1);
+	}
+	#secondary-navbar .nav-link {
+		color: #efefef;
+	}
+	table.clean-border td, table.clean-border th {
+		border-top: none;
+	}
+	input.form-check-input {
+		right: 200px;
+	}
+
+	/* Style the input fields */
+	input {
+		padding: 10px;
+		width: 100%;
+		font-size: 17px;
+		font-family: Raleway;
+		border: 1px solid #aaaaaa;
+	}
+
+	/* Mark input boxes that gets an error on validation: */
+	input.invalid {
+		background-color: #ffdddd;
+	}
+
+	/* Hide all steps by default: */
+	.tab {
+		display: none;
+	}
+
+	/* Make circles that indicate the steps of the form: */
+	.step {
+		height: 15px;
+		width: 15px;
+		margin: 0 2px;
+		background-color: #bbbbbb;
+		border: none; 
+		border-radius: 50%;
+		display: inline-block;
+		opacity: 0.5;
+	}
+
+	/* Mark the active step: */
+	.step.active {
+		opacity: 1;
+	}
+
+	/* Mark the steps that are finished and valid: */
+	.step.finish {
+		background-color: #4CAF50;
+	}

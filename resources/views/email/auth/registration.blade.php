@@ -1,0 +1,2 @@
+Ini adalah notifikasi bahwa ada user baru yang berhasil terdaftar di sistem dengan pengajuan pinjaman yang memerlukan verifikasi, silahkan klik link dibawah ini untuk melihat informasi user: <br> <br>
+<a href="{{ url('admin/users/'.$user->id) }}">Lihat User</a>
